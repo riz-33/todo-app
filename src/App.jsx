@@ -1,13 +1,14 @@
 import './App.css'
-import LoginForm from './components/login'
-// import React from 'react'
-import ToDo from './components/todo'
+// import LoginForm from './components/login'
+import RegisterForm from './components/register'
+// import ToDo from './components/todo'
 
 function App() {
   return (
     <div className="app">
-      <ToDo />
+      {/* <ToDo /> */}
       {/* <LoginForm /> */}
+      <RegisterForm />
     </div>
   )
 }

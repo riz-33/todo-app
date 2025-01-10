@@ -1,4 +1,3 @@
-// import React from "react";
 import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import { FaPencilAlt } from "react-icons/fa";
 import { FaTrashCan } from "react-icons/fa6";
