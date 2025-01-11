@@ -1,16 +1,31 @@
-import './App.css'
-// import LoginForm from './components/login'
-import RegisterForm from './components/register'
-// import ToDo from './components/todo'
+import "./App.css";
+import AppRouter from "./config/router";
+import User from "./context/user";
+import { useState, useEffect } from "react";
+import { auth, getDoc, onAuthStateChanged, db, doc } from "./config/firebase";
 
 function App() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setUser(docSnap.data());
+        } else {
+          console.log("No such document!");
+        }
+      }
+    });
+  }, []);
+
   return (
-    <div className="app">
-      {/* <ToDo /> */}
-      {/* <LoginForm /> */}
-      <RegisterForm />
-    </div>
-  )
+    <User.Provider value={{ user, setUser }}>
+      <AppRouter />
+    </User.Provider>
+  );
 }
 
-export default App
+export default App;
