@@ -23,3 +23,7 @@
 #list1 .select-input.form-control[readonly]:not([disabled]) {
     background-color: #fbfbfb;
 }
+
+/* .bg-white {
+    box-shadow: none;
+} */

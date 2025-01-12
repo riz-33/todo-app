@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app";
 import {
-  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut,
-  GoogleAuthProvider, signInWithPopup
+  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut
 } from "firebase/auth";
 import {
   getFirestore, doc, setDoc, getDoc, collection, serverTimestamp, updateDoc, addDoc,
@@ -25,6 +24,5 @@ const db = getFirestore(app);
 
 export {
   app, auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, db, doc, setDoc,
-  getDoc, signOut, collection, serverTimestamp, updateDoc, addDoc, onSnapshot, query, orderBy, getDocs, where,
-  GoogleAuthProvider, signInWithPopup
+  getDoc, signOut, collection, serverTimestamp, updateDoc, addDoc, onSnapshot, query, orderBy, getDocs, where
 }

@@ -1,6 +1,5 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import { MDBInput, MDBBtn } from "mdb-react-ui-kit";
-import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import {
   db,
@@ -9,6 +8,7 @@ import {
   auth,
   signInWithEmailAndPassword,
 } from "../config/firebase";
+import { Link } from "react-router-dom";
 
 export default function LoginForm() {
   const {
@@ -40,8 +40,6 @@ export default function LoginForm() {
     }
   };
 
-  const navigate = useNavigate();
-
   return (
     <div
       style={{
@@ -53,35 +51,45 @@ export default function LoginForm() {
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="card"
-        style={{ width: "30rem", padding: "2rem" }}
+        style={{
+          width: "30rem",
+          padding: "2rem",
+          backgroundColor: "#f8f9fa",
+          borderRadius: "10px",
+          boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+          marginTop: "5rem",
+        }}
       >
         <p className="h1 text-center mb-3 pb-3 text-primary">
           <u>LOGIN</u>
         </p>
 
         <MDBInput
-          className="mb-4"
-          type="email"
-          id="form2Example1"
-          placeholder="Email"
           {...register("email", { required: "Email is required" })}
-          error={!!errors.email}
-          helperText={errors.email?.message}
+          label="Email"
+          type="email"
+          className="mb-4"
+          id="form2Example1"
+          // error={!!errors.email}
         />
         <MDBInput
-          className="mb-4"
-          type="password"
-          id="form2Example2"
-          placeholder="Password"
           {...register("password", { required: "Password is required" })}
-          error={!!errors.password}
-          helperText={errors.password?.message}
+          label="Password"
+          type="password"
+          className="mb-4"
+          id="form2Example2"
+          // error={!!errors.password}
         />
 
         <MDBBtn type="submit" className="mb-4" block>
           SIGN IN
         </MDBBtn>
+
+        <div className="text-center">
+          <p>
+            Not a member? <Link to={"/signup"}>Register</Link>
+          </p>
+        </div>
       </form>
     </div>
   );

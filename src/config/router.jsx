@@ -1,10 +1,12 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import LoginForm from "../components/login";
-import RegisterForm from "../components/register";
-import ToDo from "../components/todo";
+import LoginForm from "../pages/login";
+import RegisterForm from "../pages/register";
+import ToDo from "../pages/todo";
 import Spinner from 'react-bootstrap/Spinner';
 import { useEffect, useState } from "react";
 import { auth, onAuthStateChanged, doc, getDoc, db } from "./firebase";
+import "../App.css";
+
 
 function AppRouter() {
     const [User, setUser] = useState(false)
@@ -28,7 +30,7 @@ function AppRouter() {
     return (
         <>
             {loader ?
-                <div style={{ textAlign: "center", alignItems: "center" }}>
+                <div className="spinner" style={{ textAlign: "center", alignItems: "center" }}>
                       <Spinner animation="grow" variant="primary" />
               </div>
                 :
