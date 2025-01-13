@@ -59,6 +59,22 @@ export default function ToDo() {
     }
   };
 
+  const [todos, setTodos] = useState([]);
+  console.log(todos);
+  useEffect(() => {
+    const fetchTodos = async () => {
+      const todos = [];
+      const querySnapshot = await getDocs(
+        collection(db, "users", user.uid, "todos")
+      );
+      querySnapshot.forEach((doc) => {
+        todos.push({ id: doc.id, ...doc.data() });
+      });
+      setTodos(todos);
+    };
+    fetchTodos();
+  }, [todo, user.uid]);
+
   const getTodos = async () => {
     const querySnapshot = await getDocs(
       collection(db, "users", user.uid, "todos")
@@ -75,8 +91,14 @@ export default function ToDo() {
   return (
     <div>
       <header>
-        <MDBNavbar expand="lg" light className="bg-white">
+        <MDBNavbar
+          style={{ padding: "0px" }}
+          expand="lg"
+          light
+          className="bg-white"
+        >
           <MDBContainer fluid>
+            <h1 style={{ textAlign: "center", flex: "auto" }}>TODO LIST</h1>
             <MDBNavbarNav className="d-flex flex-row" right fullWidth={false}>
               <MDBNavbarItem>
                 <MDBDropdown>
@@ -100,24 +122,24 @@ export default function ToDo() {
         </MDBNavbar>
       </header>
 
-      <section className="vh-100">
+      <section className="card vh-100">
         <div className="container h-100">
           <div className="row d-flex justify-content-center h-100">
-            <div className="col">
+            <div className="col-lg-8 col-xl-8">
               <div
                 id="list1"
                 style={{ borderRadius: ".75rem", backgroundColor: "#eff1f2" }}
               >
-                <div className="py-4 px-4 px-md-5">
-                  <p className="h1 text-center mt-3 mb-4 pb-3 text-primary">
+                <div className="py-4 px-4 px-md-5 vh-100">
+                  {/* <p className="h1 text-center mt-3 mb-4 pb-3 text-primary">
                     <u>TODO LIST</u>
-                  </p>
+                  </p> */}
 
                   <div className="pb-2">
                     <div className="d-flex flex-row align-items-center">
                       <input
                         type="text"
-                        className="form-control form-control-lg"
+                        className="me-2 form-control form-control-lg"
                         id="exampleFormControlInput1"
                         placeholder="Add new..."
                         value={todo}
@@ -148,59 +170,59 @@ export default function ToDo() {
                     </select>
                   </div>
 
-                  <ul className="list-group list-group-horizontal rounded-0 bg-transparent">
-                    <li className="list-group-item d-flex align-items-center ps-0 pe-3 py-1 rounded-0 border-0 bg-transparent">
-                      <div className="form-check">
-                        <input
-                          className="form-check-input me-0"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckChecked1"
-                          aria-label="..."
-                        />
-                      </div>
-                    </li>
-                    <li
-                      className="list-group-item px-3 py-1 d-flex align-items-center flex-grow-1 
-                    border-0 bg-transparent"
-                    >
-                      <p className="lead fw-normal mb-0">
-                        Buy groceries for next week
-                      </p>
-                    </li>
-                    <li className="list-group-item ps-3 pe-0 py-1 rounded-0 border-0 bg-transparent">
-                      <div className="d-flex flex-row justify-content-end mb-1">
-                        <a
-                          href="#!"
-                          className="text-info"
-                          data-mdb-tooltip-init
-                          title="Edit todo"
+                  <ul className="list-group rounded-0 bg-transparent">
+                    {todos.map((todo) => {
+                      const createdAt =
+                        todo.createdAt &&
+                        todo.createdAt.toDate().toLocaleString();
+                      return (
+                        <li
+                          key={todo.id}
+                          className="list-group-item d-flex align-items-center border-0 bg-transparent"
                         >
-                          <FaPencilAlt />
-                        </a>
-                        <a
-                          href="#!"
-                          className="text-danger"
-                          data-mdb-tooltip-init
-                          title="Delete todo"
-                        >
-                          <FaTrashCan />
-                        </a>
-                      </div>
-                      <div className="text-end text-muted">
-                        <a
-                          href="#!"
-                          className="text-muted"
-                          data-mdb-tooltip-init
-                          title="Created date"
-                        >
-                          <p className="small mb-0">
-                            <i className="fas fa-info-circle me-2"></i>28th Jun
-                            2020
+                          <div className="form-check">
+                            <input
+                              className="form-check-input me-0"
+                              type="checkbox"
+                              value=""
+                              id="flexCheckChecked1"
+                              aria-label="..."
+                            />
+                          </div>
+                          <p className="fw-normal mb-0 flex-grow-1 ms-3">
+                            {todo.text}
                           </p>
-                        </a>
-                      </div>
-                    </li>
+                          <div className="d-flex flex-row justify-content-end">
+                            <a
+                              href="#!"
+                              className="text-info me-2"
+                              data-mdb-tooltip-init
+                              title="Edit todo"
+                            >
+                              <FaPencilAlt />
+                            </a>
+                            <a
+                              href="#!"
+                              className="text-danger me-2"
+                              data-mdb-tooltip-init
+                              title="Delete todo"
+                            >
+                              <FaTrashCan />
+                            </a>
+                          </div>
+                          <div className="text-end text-muted">
+                            <a
+                              href="#!"
+                              className="text-muted"
+                              data-mdb-tooltip-init
+                              title="Created date"
+                            >
+                              <p className="small mb-0">{createdAt}</p>
+                            </a>
+                          </div>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               </div>
