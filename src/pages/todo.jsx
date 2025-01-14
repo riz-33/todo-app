@@ -4,6 +4,8 @@ import { FaTrashCan } from "react-icons/fa6";
 import "./todo.css";
 import User from "../context/user";
 import { useContext, useEffect, useState } from "react";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 import {
   auth,
   signOut,
@@ -12,7 +14,10 @@ import {
   db,
   serverTimestamp,
   query,
+  doc,
   getDocs,
+  updateDoc,
+  deleteDoc,
 } from "../config/firebase";
 import {
   MDBBreadcrumb,
@@ -87,6 +92,33 @@ export default function ToDo() {
   useEffect(() => {
     getTodos();
   });
+
+  const [isActive, setIsActive] = useState({});
+  const handleClick = async (id) => {
+    try {
+      setIsActive((prevTasks) => ({
+        ...prevTasks,
+        [id]: !prevTasks[id],
+      }));
+      const newStatus = !isActive[id] ? "Completed" : "Active";
+      const taskRef = doc(db, "users", user.uid, "todos", id);
+      await updateDoc(taskRef, {
+        status: newStatus,
+      });
+      console.log(`Task ${id} updated to ${newStatus}`);
+    } catch (error) {
+      console.log("Error updating task:", error);
+    }
+  };
+
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = (id) => setShow(true);
+
+  const deleteTodo = async (id) => {
+    await deleteDoc(doc(db, "users", user.uid, "todos", id));
+    setTodos(todos.filter(todo => todo.id !== id));
+  };
 
   return (
     <div>
@@ -185,11 +217,16 @@ export default function ToDo() {
                               className="form-check-input me-0"
                               type="checkbox"
                               value=""
-                              id="flexCheckChecked1"
+                              id={`checkbox-${todo.id}`}
                               aria-label="..."
+                              onClick={() => handleClick(todo.id)}
                             />
                           </div>
-                          <p className="fw-normal mb-0 flex-grow-1 ms-3">
+                          <p
+                            className={`fw-normal mb-0 flex-grow-1 ms-3 ${
+                              isActive ? "todo-completed" : ""
+                            }`}
+                          >
                             {todo.text}
                           </p>
                           <div className="d-flex flex-row justify-content-end">
@@ -199,15 +236,48 @@ export default function ToDo() {
                               data-mdb-tooltip-init
                               title="Edit todo"
                             >
-                              <FaPencilAlt />
+                              <FaPencilAlt
+                                id={todo.id}
+                                onClick={() => handleShow(todo.id)}
+                              />
+                              {/* onClick={handleShow} /> */}
                             </a>
+                            <Modal show={show} onHide={handleClose}>
+                              <Modal.Header closeButton>
+                                <Modal.Title>Update TODO</Modal.Title>
+                              </Modal.Header>
+                              <Modal.Body>
+                                <input
+                                  type="text"
+                                  className="me-2 form-control form-control-lg"
+                                  id="exampleFormControlInput1"
+                                  // placeholder="Add new..."
+                                  value={todo.id}
+                                  onChange={(e) => todo(e.target.value)}
+                                />
+                              </Modal.Body>
+                              <Modal.Footer>
+                                <Button
+                                  variant="secondary"
+                                  onClick={handleClose}
+                                >
+                                  Cancel
+                                </Button>
+                                <Button variant="primary" onClick={handleClose}>
+                                  Update Task
+                                </Button>
+                              </Modal.Footer>
+                            </Modal>
                             <a
                               href="#!"
                               className="text-danger me-2"
                               data-mdb-tooltip-init
                               title="Delete todo"
                             >
-                              <FaTrashCan />
+                              <FaTrashCan
+                                id={todo.id}
+                                onClick={() => deleteTodo(todo.id)}
+                              />
                             </a>
                           </div>
                           <div className="text-end text-muted">

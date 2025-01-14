@@ -4,7 +4,7 @@ import {
 } from "firebase/auth";
 import {
   getFirestore, doc, setDoc, getDoc, collection, serverTimestamp, updateDoc, addDoc,
-  onSnapshot, query, orderBy, getDocs, where
+  onSnapshot, query, orderBy, getDocs, where, deleteDoc
 } from "firebase/firestore";
 
 
@@ -24,5 +24,6 @@ const db = getFirestore(app);
 
 export {
   app, auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, db, doc, setDoc,
-  getDoc, signOut, collection, serverTimestamp, updateDoc, addDoc, onSnapshot, query, orderBy, getDocs, where
+  getDoc, signOut, collection, serverTimestamp, updateDoc, addDoc, onSnapshot, query, orderBy, getDocs, where,
+  deleteDoc
 }

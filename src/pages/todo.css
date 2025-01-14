@@ -24,6 +24,7 @@
     background-color: #fbfbfb;
 }
 
-/* .bg-white {
-    box-shadow: none;
-} */
+.todo-completed{
+    opacity: .7;
+    text-decoration: line-through;
+}
