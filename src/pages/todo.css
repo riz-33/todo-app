@@ -28,3 +28,9 @@
     opacity: .7;
     text-decoration: line-through;
 }
+
+.toast-div{
+    /* align-self: flex-end; */
+    /* position: fixed; */
+
+}

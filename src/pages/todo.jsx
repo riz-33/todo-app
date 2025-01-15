@@ -6,6 +6,9 @@ import User from "../context/user";
 import { useContext, useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
+import Toast from "react-bootstrap/Toast";
 import {
   auth,
   signOut,
@@ -36,6 +39,10 @@ import {
   MDBDropdownItem,
   MDBBadge,
 } from "mdb-react-ui-kit";
+import { MdDownloadDone } from "react-icons/md";
+import { CiCircleAlert } from "react-icons/ci";
+import { TiDelete } from "react-icons/ti";
+import { ToastContainer } from "react-bootstrap";
 
 export default function ToDo() {
   const user = useContext(User).user;
@@ -43,10 +50,12 @@ export default function ToDo() {
     signOut(auth);
   };
 
+  const [showAddTodo, setShowAddTodo] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
   const [todo, setTodo] = useState("");
   const handleAddTodo = async () => {
     if (todo.trim() === "") {
-      alert("Please enter a todo");
+      setShowAlert(true);
       return;
     }
 
@@ -58,6 +67,7 @@ export default function ToDo() {
       });
       console.log("Document written with ID: ", docRef.id);
       setTodo("");
+      setShowAddTodo(true);
     } catch (error) {
       console.error("Error adding document:", error);
       alert("Failed to add todo. Please try again");
@@ -111,13 +121,15 @@ export default function ToDo() {
     }
   };
 
-  const [show, setShow] = useState(false);
+  // const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = (id) => setShow(true);
+  // const handleShow = (id) => setShow(true);
 
+  const [showDelete, setShowDelete] = useState(false);
   const deleteTodo = async (id) => {
     await deleteDoc(doc(db, "users", user.uid, "todos", id));
-    setTodos(todos.filter(todo => todo.id !== id));
+    setShowDelete(true);
+    setTodos(todos.filter((todo) => todo.id !== id));
   };
 
   return (
@@ -155,6 +167,53 @@ export default function ToDo() {
       </header>
 
       <section className="card vh-100">
+        <div className="toast-div">
+          <Toast
+            onClose={() => setShowAddTodo(false)}
+            show={showAddTodo}
+            delay={3000}
+            autohide
+            bg="success"
+          >
+            <Toast.Body style={{ color: "white" }}>
+              <MdDownloadDone style={{ fontSize: 20 }} className="me-1" />
+              Task Added Successfully!
+            </Toast.Body>
+          </Toast>
+        </div>
+
+          <ToastContainer style={{marginBlockEnd:80}} position="bottom-end">
+        <div className="toast-div">
+          <Toast
+            // onClose={() => setShowAlert(false)}
+            show={showAlert}
+            delay={3000}
+            autohide
+            bg="danger"
+            >
+            <Toast.Body style={{ color: "white", padding: 10 }}>
+              <CiCircleAlert style={{ fontSize: 20 }} className="me-1" />
+              Please Enter a Task!
+            </Toast.Body>
+          </Toast>
+        </div>
+            </ToastContainer>
+
+        <div className="toast-div">
+          <Toast
+            onClose={() => setShowDelete(false)}
+            show={showDelete}
+            delay={3000}
+            autohide
+            bg="warning"
+          >
+            <Toast.Body style={{ color: "white" }}>
+              <TiDelete style={{ fontSize: 20 }} className="me-1" />
+              Task Has Been Deleted!
+            </Toast.Body>
+          </Toast>
+        </div>
+
         <div className="container h-100">
           <div className="row d-flex justify-content-center h-100">
             <div className="col-lg-8 col-xl-8">
@@ -183,7 +242,10 @@ export default function ToDo() {
                           data-mdb-button-init
                           data-mdb-ripple-init
                           className="btn btn-primary"
-                          onClick={handleAddTodo}
+                          // onClick={handleAddTodo}
+                          onClick={() => {
+                            handleAddTodo();
+                          }}
                         >
                           Add
                         </button>
@@ -238,11 +300,12 @@ export default function ToDo() {
                             >
                               <FaPencilAlt
                                 id={todo.id}
-                                onClick={() => handleShow(todo.id)}
+                                // onClick={() => handleShow(todo.id)}
                               />
                               {/* onClick={handleShow} /> */}
                             </a>
-                            <Modal show={show} onHide={handleClose}>
+                            <Modal>
+                              {/* <Modal show={show} onHide={handleClose}> */}
                               <Modal.Header closeButton>
                                 <Modal.Title>Update TODO</Modal.Title>
                               </Modal.Header>
@@ -259,7 +322,7 @@ export default function ToDo() {
                               <Modal.Footer>
                                 <Button
                                   variant="secondary"
-                                  onClick={handleClose}
+                                  // onClick={handleClose}
                                 >
                                   Cancel
                                 </Button>
