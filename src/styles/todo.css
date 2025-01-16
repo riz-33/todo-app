@@ -1,13 +1,14 @@
-.card{
+.card {
     border-radius: .75rem;
     background-color: #eff1f2;
-
 }
-.card-header{
+
+.card-header {
     background-color: #eff1f2;
     border-bottom: 1px solid #d9d9d9;
 }
-.card-body{
+
+.card-body {
     background-color: #eff1f2;
 }
 
@@ -24,13 +25,11 @@
     background-color: #fbfbfb;
 }
 
-.todo-completed{
+.todo-completed {
     opacity: .7;
     text-decoration: line-through;
 }
 
-.toast-div{
-    /* align-self: flex-end; */
-    /* position: fixed; */
-
+.todo-body {
+    /* background-color: #eff1f2; */
 }

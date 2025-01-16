@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import "../styles/form.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { MDBInput, MDBBtn } from "mdb-react-ui-kit";
 import { useForm } from "react-hook-form";
@@ -14,7 +16,6 @@ export default function LoginForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
     reset,
   } = useForm();
 
@@ -40,6 +41,39 @@ export default function LoginForm() {
     }
   };
 
+  const [formStyle, setFormStyle] = useState({});
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 480) {
+        setFormStyle({
+          width: "90%",
+          padding: "1rem",
+          marginTop: "3rem",
+        });
+      } else if (window.innerWidth <= 768) {
+        setFormStyle({
+          width: "60%",
+          padding: "1.5rem",
+          marginTop: "3rem",
+        });
+      } else {
+        setFormStyle({
+          width: "30rem",
+          padding: "2rem",
+          marginTop: "5rem",
+        });
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <div
       style={{
@@ -49,17 +83,7 @@ export default function LoginForm() {
         flexDirection: "column",
       }}
     >
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        style={{
-          width: "30rem",
-          padding: "2rem",
-          backgroundColor: "#f8f9fa",
-          borderRadius: "10px",
-          boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-          marginTop: "5rem",
-        }}
-      >
+      <form onSubmit={handleSubmit(onSubmit)} style={formStyle}>
         <p className="h1 text-center mb-3 pb-3 text-primary">
           <u>LOGIN</u>
         </p>
@@ -70,7 +94,6 @@ export default function LoginForm() {
           type="email"
           className="mb-4"
           id="form2Example1"
-          // error={!!errors.email}
         />
         <MDBInput
           {...register("password", { required: "Password is required" })}
@@ -78,7 +101,6 @@ export default function LoginForm() {
           type="password"
           className="mb-4"
           id="form2Example2"
-          // error={!!errors.password}
         />
 
         <MDBBtn type="submit" className="mb-4" block>

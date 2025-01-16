@@ -1,6 +1,12 @@
+import { useState, useEffect } from "react";
+import "../styles/form.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { MDBInput, MDBBtn } from "mdb-react-ui-kit";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import { Toast, ToastContainer } from "react-bootstrap";
+import { MdDownloadDone } from "react-icons/md";
+import { CiCircleAlert } from "react-icons/ci";
 import {
   auth,
   createUserWithEmailAndPassword,
@@ -9,25 +15,11 @@ import {
   setDoc,
   serverTimestamp,
 } from "../config/firebase";
-import { Link } from "react-router-dom";
 
 export default function RegisterForm() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm();
-
-  // const [formValue, setFormValue] = useState({
-  //   username: "",
-  //   email: "",
-  //   password: "",
-  // });
-
-  // const onChange = (e) => {
-  //   setFormValue({ ...formValue, [e.target.name]: e.target.value });
-  // };
+  const [show, setShow] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const { register, handleSubmit, reset } = useForm();
 
   const onSubmit = async (data) => {
     try {
@@ -36,6 +28,7 @@ export default function RegisterForm() {
         data.email,
         data.password
       );
+      setShow(true);
       await setDoc(doc(db, "users", response.user.uid), {
         username: data.username,
         email: data.email,
@@ -46,9 +39,42 @@ export default function RegisterForm() {
       console.log("User registered and saved to Firestore:", response.user);
       reset();
     } catch (error) {
+      setShowAlert(true);
       console.error("Error during email/password signup:", error);
     }
   };
+
+  const [formStyle, setFormStyle] = useState({});
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 480) {
+        setFormStyle({
+          width: "90%",
+          padding: "1rem",
+          marginTop: "3rem",
+        });
+      } else if (window.innerWidth <= 768) {
+        setFormStyle({
+          width: "60%",
+          padding: "1.5rem",
+          marginTop: "3rem",
+        });
+      } else {
+        setFormStyle({
+          width: "30rem",
+          padding: "2rem",
+          marginTop: "5rem",
+        });
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
     <div
@@ -59,32 +85,18 @@ export default function RegisterForm() {
         flexDirection: "column",
       }}
     >
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        style={{
-          width: "30rem",
-          padding: "2rem",
-          backgroundColor: "#f8f9fa",
-          borderRadius: "10px",
-          boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-          marginTop: "5rem",
-        }}
-      >
+      <form onSubmit={handleSubmit(onSubmit)} style={formStyle}>
         <p className="h1 text-center mb-3 pb-3 text-primary">
           <u>REGISTER</u>
         </p>
 
         <MDBInput
-          // value={formValue.username}
           name="username"
-          // onChange={onChange}
           className="mb-4"
           type="text"
           id="form2Example1"
           label="Username"
-          // required
           {...register("username", { required: "Username is required" })}
-          // error={!!errors.username}
         />
         <MDBInput
           // value={formValue.email}
@@ -119,8 +131,37 @@ export default function RegisterForm() {
             Already a member? <Link to={"/"}>Login</Link>
           </p>
         </div>
-
       </form>
+
+      <ToastContainer className="mb-2" position="bottom-end">
+        <Toast
+          onClose={() => setShow(false)}
+          show={show}
+          delay={3000}
+          autohide
+          bg="success"
+        >
+          <Toast.Body style={{ color: "white", padding: 10 }}>
+            <MdDownloadDone style={{ fontSize: 20 }} className="me-1" />
+            User Registered Successfully!
+          </Toast.Body>
+        </Toast>
+      </ToastContainer>
+
+      <ToastContainer className="mb-2" position="bottom-end">
+        <Toast
+          onClose={() => setShowAlert(false)}
+          show={showAlert}
+          delay={3000}
+          autohide
+          bg="danger"
+        >
+          <Toast.Body style={{ color: "white", padding: 10 }}>
+            <CiCircleAlert style={{ fontSize: 20 }} className="me-1" />
+            Error during email/password!
+          </Toast.Body>
+        </Toast>
+      </ToastContainer>
     </div>
   );
 }
