@@ -1,7 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import LoginForm from "../pages/login";
 import RegisterForm from "../pages/register";
-import ToDo from "../pages/todo";
+import ToDoApp from "../pages/todo";
 import Spinner from 'react-bootstrap/Spinner';
 import { useEffect, useState } from "react";
 import { auth, onAuthStateChanged, doc, getDoc, db } from "./firebase";
@@ -38,7 +38,7 @@ function AppRouter() {
                     <Routes>
                         <Route path="/" element={User ? <Navigate to={"/todo"} /> : <LoginForm />} />
                         <Route path="/signup" element={User ? <Navigate to={"/todo"} /> : <RegisterForm />} />
-                        <Route path="/todo" element={User ? <ToDo /> : <Navigate to={"/"} />} />
+                        <Route path="/todo" element={User ? <ToDoApp /> : <Navigate to={"/"} />} />
                     </Routes>
                 </BrowserRouter>
             }
