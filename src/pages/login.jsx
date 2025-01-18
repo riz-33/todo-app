@@ -3,6 +3,8 @@ import "../styles/form.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { MDBInput, MDBBtn } from "mdb-react-ui-kit";
 import { useForm } from "react-hook-form";
+import { Toast, ToastContainer } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import {
   db,
   doc,
@@ -10,14 +12,10 @@ import {
   auth,
   signInWithEmailAndPassword,
 } from "../config/firebase";
-import { Link } from "react-router-dom";
 
 export default function LoginForm() {
-  const {
-    register,
-    handleSubmit,
-    reset,
-  } = useForm();
+  const { register, handleSubmit, reset } = useForm();
+  const [showToast, setShowToast] = useState({ type: "", visible: false });
 
   const onSubmit = async (data) => {
     try {
@@ -26,19 +24,24 @@ export default function LoginForm() {
         data.email,
         data.password
       );
+      showToastMessage("User Login Successfully!", "success");
       const docRef = doc(db, "users", response.user.uid);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
+        // console.log("Document data:", docSnap.data());
       } else {
-        console.log("No such document!");
+        // console.log("No such document!");
       }
-      console.log("User logged in:", response.user);
       reset();
     } catch (error) {
-      console.error("Error during login:", error);
+      showToastMessage(`${error}`, "danger");
     }
+  };
+
+  const showToastMessage = (message, type) => {
+    setShowToast({ type, message, visible: true });
+    setTimeout(() => setShowToast({ ...showToast, visible: false }), 3000);
   };
 
   const [formStyle, setFormStyle] = useState({});
@@ -113,6 +116,14 @@ export default function LoginForm() {
           </p>
         </div>
       </form>
+
+      <ToastContainer className="mb-2" position="bottom-end">
+        <Toast show={showToast.visible} bg={showToast.type}>
+          <Toast.Body style={{ color: "white", padding: 10 }}>
+            {showToast.message}
+          </Toast.Body>
+        </Toast>
+      </ToastContainer>
     </div>
   );
 }

@@ -2,9 +2,6 @@ import "mdb-react-ui-kit/dist/css/mdb.min.css";
 import "../styles/todo.css";
 import User from "../context/user";
 import { useContext, useEffect, useState } from "react";
-import { CiCircleAlert } from "react-icons/ci";
-import { MdDownloadDone } from "react-icons/md";
-import { TiDelete } from "react-icons/ti";
 import { FaTrashCan } from "react-icons/fa6";
 import { FaPencilAlt, FaRegUserCircle } from "react-icons/fa";
 import { Button, Modal, Toast, ToastContainer } from "react-bootstrap";
@@ -23,21 +20,13 @@ import {
   orderBy,
 } from "../config/firebase";
 import {
-  MDBBreadcrumb,
-  MDBBreadcrumbItem,
   MDBContainer,
   MDBNavbar,
-  MDBInputGroup,
-  MDBIcon,
-  MDBInput,
-  MDBNavbarLink,
   MDBNavbarNav,
-  MDBNavbarItem,
   MDBDropdown,
   MDBDropdownToggle,
   MDBDropdownMenu,
   MDBDropdownItem,
-  MDBBadge,
 } from "mdb-react-ui-kit";
 
 export default function ToDoApp() {
@@ -57,8 +46,6 @@ export default function ToDoApp() {
       orderBy("createdAt", "desc")
     );
     const querySnapshot = await getDocs(q);
-    // collection(db, "users", user.uid, "todos")
-    // );
     const fetchedTodos = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
@@ -85,7 +72,8 @@ export default function ToDoApp() {
       showToastMessage("Task Added Successfully!", "success");
       fetchTodos();
     } catch (error) {
-      console.error("Error adding todo:", error);
+      showToastMessage(`${error}`, "info");
+      // console.error("Error adding todo:", error);
     }
   };
 
@@ -102,7 +90,8 @@ export default function ToDoApp() {
       setEditingText("");
       fetchTodos();
     } catch (error) {
-      console.error("Error updating todo:", error);
+      showToastMessage(`${error}`, "info");
+      // console.error("Error updating todo:", error);
     }
   };
 
@@ -114,7 +103,8 @@ export default function ToDoApp() {
       });
       fetchTodos();
     } catch (error) {
-      console.error("Error updating status:", error);
+      showToastMessage(`${error}`, "info");
+      // console.error("Error updating status:", error);
     }
   };
 
@@ -124,7 +114,8 @@ export default function ToDoApp() {
       showToastMessage("Task Has Been Deleted!", "warning");
       setTodos(todos.filter((todo) => todo.id !== id));
     } catch (error) {
-      console.error("Error deleting todo:", error);
+      showToastMessage(`${error}`, "info");
+      // console.error("Error deleting todo:", error);
     }
   };
 
@@ -166,7 +157,6 @@ export default function ToDoApp() {
       </header>
 
       <section className="card vh-100">
-        {/* Toast Notifications */}
         <ToastContainer position="top-end">
           <Toast show={showToast.visible} bg={showToast.type}>
             <Toast.Body style={{ color: "white", padding: 10 }}>
@@ -194,7 +184,7 @@ export default function ToDoApp() {
           <div className="d-flex justify-content-end mb-2">
             <p className="mt-2 mb-0 me-2 text-muted">Filter</p>
             <select
-              style={{ width: "30%" }}
+              style={{ width: "20%" }}
               className="form-select"
               value={filter}
               onChange={(e) => setFilter(e.target.value)}

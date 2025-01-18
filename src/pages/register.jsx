@@ -5,8 +5,6 @@ import { MDBInput, MDBBtn } from "mdb-react-ui-kit";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { Toast, ToastContainer } from "react-bootstrap";
-import { MdDownloadDone } from "react-icons/md";
-import { CiCircleAlert } from "react-icons/ci";
 import {
   auth,
   createUserWithEmailAndPassword,
@@ -17,9 +15,8 @@ import {
 } from "../config/firebase";
 
 export default function RegisterForm() {
-  const [show, setShow] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
   const { register, handleSubmit, reset } = useForm();
+  const [showToast, setShowToast] = useState({ type: "", visible: false });
 
   const onSubmit = async (data) => {
     try {
@@ -28,7 +25,7 @@ export default function RegisterForm() {
         data.email,
         data.password
       );
-      setShow(true);
+      showToastMessage("User Registered Successfully!", "success");
       await setDoc(doc(db, "users", response.user.uid), {
         username: data.username,
         email: data.email,
@@ -36,12 +33,17 @@ export default function RegisterForm() {
         uid: response.user.uid,
         createdAt: serverTimestamp(),
       });
-      console.log("User registered and saved to Firestore:", response.user);
+      // console.log("User registered and saved to Firestore:", response.user);
       reset();
     } catch (error) {
-      setShowAlert(true);
-      console.error("Error during email/password signup:", error);
+      showToastMessage(`${error}`, "danger");
+      // console.error("Error during email/password signup:", error);
     }
+  };
+
+  const showToastMessage = (message, type) => {
+    setShowToast({ type, message, visible: true });
+    setTimeout(() => setShowToast({ ...showToast, visible: false }), 3000);
   };
 
   const [formStyle, setFormStyle] = useState({});
@@ -99,27 +101,20 @@ export default function RegisterForm() {
           {...register("username", { required: "Username is required" })}
         />
         <MDBInput
-          // value={formValue.email}
           name="email"
-          // onChange={onChange}
           className="mb-4"
           type="email"
           id="form2Example2"
-          // required
           label="Email"
           {...register("email", { required: "Email is required" })}
-          // error={!!errors.email}
         />
         <MDBInput
-          // value={formValue.password}
           name="password"
-          // onChange={onChange}
           className="mb-4"
           type="password"
           id="form2Example3"
           label="Password"
           {...register("password", { required: "Password is required" })}
-          // error={!!errors.password}
         />
 
         <MDBBtn type="submit" className="mb-4" block>
@@ -134,31 +129,9 @@ export default function RegisterForm() {
       </form>
 
       <ToastContainer className="mb-2" position="bottom-end">
-        <Toast
-          onClose={() => setShow(false)}
-          show={show}
-          delay={3000}
-          autohide
-          bg="success"
-        >
+        <Toast show={showToast.visible} bg={showToast.type}>
           <Toast.Body style={{ color: "white", padding: 10 }}>
-            <MdDownloadDone style={{ fontSize: 20 }} className="me-1" />
-            User Registered Successfully!
-          </Toast.Body>
-        </Toast>
-      </ToastContainer>
-
-      <ToastContainer className="mb-2" position="bottom-end">
-        <Toast
-          onClose={() => setShowAlert(false)}
-          show={showAlert}
-          delay={3000}
-          autohide
-          bg="danger"
-        >
-          <Toast.Body style={{ color: "white", padding: 10 }}>
-            <CiCircleAlert style={{ fontSize: 20 }} className="me-1" />
-            Error during email/password!
+            {showToast.message}
           </Toast.Body>
         </Toast>
       </ToastContainer>
